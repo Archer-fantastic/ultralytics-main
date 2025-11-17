@@ -6,8 +6,6 @@
   "imageData": null,
   "imageHeight": 768,
   "imageWidth": 1024,
-  "image_path_list": [
-    "28b5771cfb6b13e9.jpg"
-  ],
+  "image_path_list": ["28b5771cfb6b13e9.jpg"],
   "channels": 3
 }
