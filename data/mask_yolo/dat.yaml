@@ -1,5 +1,7 @@
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
 train: D:\Projects\ultralytics-main\data\mask_yolo\images\train
 val: D:\Projects\ultralytics-main\data\mask_yolo\images\val
 test: D:\Projects\ultralytics-main\data\mask_yolo\images\test
 nc: 2
-names: ['with_mask','without_mask']
+names: ["with_mask", "without_mask"]
