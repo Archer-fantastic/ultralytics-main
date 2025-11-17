@@ -1,12 +1,17 @@
-from ultralytics import YOLO
-import os
+# Ultralytics 🚀 AGPL-3.0 License - https://ultralytics.com/license
+
 import argparse
+import json
+import os
+from datetime import datetime
+from glob import glob
+
 import cv2
 import numpy as np
-import json
-from datetime import datetime
 from PIL import Image, ImageDraw, ImageFont
-from glob import glob
+
+from ultralytics import YOLO
+
 
 class YOLODetectorPredictor:
     def __init__(self, model_path, draw_chinese=False):
@@ -22,7 +27,7 @@ class YOLODetectorPredictor:
             "C:/Windows/Fonts/simhei.ttf",
             "C:/Windows/Fonts/msyh.ttc",
             "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
-            "/Library/Fonts/PingFang.ttc"
+            "/Library/Fonts/PingFang.ttc",
         ]
         for path in font_paths:
             if os.path.exists(path):
@@ -33,7 +38,7 @@ class YOLODetectorPredictor:
     def _draw_annotations(self, img, boxes, class_ids, confidences):
         img_copy = img.copy()
         colors = [(0, 255, 0), (0, 0, 255), (255, 0, 0), (255, 255, 0), (0, 255, 255)]
-        
+
         for i in range(len(boxes)):
             # 强制提取边界框数值（解决嵌套列表问题）
             box = boxes[i].flatten() if isinstance(boxes[i], np.ndarray) else boxes[i]
@@ -42,9 +47,9 @@ class YOLODetectorPredictor:
             conf = confidences[i]
             class_name = self.class_names[int(class_id)]
             color = colors[i % len(colors)]
-            
+
             cv2.rectangle(img_copy, (x1, y1), (x2, y2), color, 2)
-            
+
             label = f"{class_name} ({conf:.2f})"
             label_y = max(30, y1)
             if self.draw_chinese:
@@ -53,35 +58,34 @@ class YOLODetectorPredictor:
                 draw.text((x1, label_y - 30), label, font=self.font, fill=(color[2], color[1], color[0]))
                 img_copy = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
             else:
-                cv2.putText(img_copy, label, (x1, label_y - 10),
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
-        
+                cv2.putText(img_copy, label, (x1, label_y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, color, 2)
+
         return img_copy
 
     def _box_to_polygon(self, box):
-        """将边界框转换为LabelMe格式的矩形多边形坐标"""
+        """将边界框转换为LabelMe格式的矩形多边形坐标."""
         # 关键修复：强制展平数组并提取数值，解决嵌套列表问题
         if isinstance(box, np.ndarray):
             box = box.flatten().tolist()  # 展平数组并转为列表
         else:
             box = box[:4]  # 确保只取前四个元素
-        
+
         # 强制提取四个坐标值（防止任何嵌套结构）
         x1 = float(box[0]) if not isinstance(box[0], list) else float(box[0][0])
         y1 = float(box[1]) if not isinstance(box[1], list) else float(box[1][0])
         x2 = float(box[2]) if not isinstance(box[2], list) else float(box[2][0])
         y2 = float(box[3]) if not isinstance(box[3], list) else float(box[3][0])
-        
+
         return [
             [x1, y1],  # 左上角
             [x2, y1],  # 右上角
             [x2, y2],  # 右下角
-            [x1, y2]   # 左下角
+            [x1, y2],  # 左下角
         ]
 
     def _save_labelme_json(self, save_path, boxes, class_names, img_path, img_shape):
         img_filename = os.path.basename(img_path)
-        
+
         labelme_data = {
             "version": "5.4.1",
             "flags": {},
@@ -91,9 +95,9 @@ class YOLODetectorPredictor:
             "imageHeight": img_shape[0],
             "imageWidth": img_shape[1],
             "image_path_list": [img_filename],
-            "channels": 3
+            "channels": 3,
         }
-        
+
         for box, class_name in zip(boxes, class_names):
             polygon = self._box_to_polygon(box)
             shape = {
@@ -103,10 +107,10 @@ class YOLODetectorPredictor:
                 "description": "",
                 "shape_type": "polygon",
                 "flags": {},
-                "mask": None
+                "mask": None,
             }
             labelme_data["shapes"].append(shape)
-        
+
         with open(f"{save_path}.json", "w", encoding="utf-8") as f:
             json.dump(labelme_data, f, ensure_ascii=False, indent=2)
 
@@ -117,7 +121,7 @@ class YOLODetectorPredictor:
 
         results = self.model(img_path)
         result = results[0]
-        
+
         # 解析结果（CPU转换）
         boxes = result.boxes.xyxy.cpu().numpy()  # 形状为 (N, 4)
         class_ids = result.boxes.cls.cpu().numpy()
@@ -129,35 +133,40 @@ class YOLODetectorPredictor:
         for i in range(object_count):
             class_name = self.class_names[int(class_ids[i])]
             box = boxes[i]
-            print(f"  目标 {i+1}：类别={class_name}，置信度={confidences[i]:.4f}，"
-                  f"位置=({int(box[0])},{int(box[1])})-({int(box[2])},{int(box[3])})")
+            print(
+                f"  目标 {i + 1}：类别={class_name}，置信度={confidences[i]:.4f}，"
+                f"位置=({int(box[0])},{int(box[1])})-({int(box[2])},{int(box[3])})"
+            )
 
         if save_dir:
             os.makedirs(save_dir, exist_ok=True)
             base_name = os.path.splitext(os.path.basename(img_path))[0]
             img_save_path = os.path.join(save_dir, f"{base_name}.jpg")
             json_save_path = os.path.join(save_dir, base_name)
-            
+
             img = cv2.imread(img_path)
             if object_count > 0 and self.draw_chinese:
                 img = self._draw_annotations(img, boxes, class_ids, confidences)
-            
+
             # 转换边界框为多边形
             polygons = [self._box_to_polygon(box) for box in boxes]
             class_names = [self.class_names[int(cid)] for cid in class_ids]
-            
+
             cv2.imwrite(img_save_path, img)
             self._save_labelme_json(json_save_path, polygons, class_names, img_path, img_shape)
 
         return {
             "image_path": img_path,
             "object_count": object_count,
-            "objects": [{
-                "box": boxes[i].tolist(),
-                "class_id": int(class_ids[i]),
-                "class_name": self.class_names[int(class_ids[i])],
-                "confidence": float(confidences[i])
-            } for i in range(object_count)]
+            "objects": [
+                {
+                    "box": boxes[i].tolist(),
+                    "class_id": int(class_ids[i]),
+                    "class_name": self.class_names[int(class_ids[i])],
+                    "confidence": float(confidences[i]),
+                }
+                for i in range(object_count)
+            ],
         }
 
     def predict_single_folder(self, folder_path, save_root=None, recursive=False):
@@ -165,11 +174,11 @@ class YOLODetectorPredictor:
             print(f"错误：文件夹不存在 - {folder_path}")
             return []
 
-        img_extensions = ['*.jpg', '*.jpeg', '*.png', '*.bmp', '*.gif']
+        img_extensions = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif"]
         img_paths = []
         for ext in img_extensions:
             if recursive:
-                img_paths.extend(glob(os.path.join(folder_path, '**', ext), recursive=True))
+                img_paths.extend(glob(os.path.join(folder_path, "**", ext), recursive=True))
             else:
                 img_paths.extend(glob(os.path.join(folder_path, ext)))
 
@@ -184,29 +193,39 @@ class YOLODetectorPredictor:
             if save_root:
                 rel_path = os.path.relpath(os.path.dirname(img_path), folder_path)
                 save_dir = os.path.join(save_root, rel_path)
-            
+
             result = self.predict_single_image(img_path, save_dir)
             if result:
                 all_results.append(result)
 
         return all_results
 
+
 def parse_args():
-    parser = argparse.ArgumentParser(description='YOLO目标检测预测脚本（输出LabelMe格式JSON）')
-    parser.add_argument('--model', type=str, 
-                        default=r"D:\Min\Projects\VSCodeProjects\ultralytics-main\weights\yolov8n.pt", 
-                        help='训练好的检测模型路径')
-    parser.add_argument('--img', type=str, default=r'D:\Min\Projects\VSCodeProjects\ultralytics-main\data\demo.jpg', 
-                        help='单张图像路径（可选）')
-    parser.add_argument('--folder', type=str, default=None, 
-                        help='单个文件夹路径（可选）')
-    parser.add_argument('--recursive', action='store_false', 
-                        help='是否递归读取文件夹')
-    parser.add_argument('--save', type=str, default=r'D:\Min\Projects\VSCodeProjects\ultralytics-main\results\test_imgs', 
-                        help='结果保存根目录')
-    parser.add_argument('--draw-chinese', action='store_false', 
-                        help='是否绘制中文标签')
+    parser = argparse.ArgumentParser(description="YOLO目标检测预测脚本（输出LabelMe格式JSON）")
+    parser.add_argument(
+        "--model",
+        type=str,
+        default=r"D:\Min\Projects\VSCodeProjects\ultralytics-main\weights\yolov8n.pt",
+        help="训练好的检测模型路径",
+    )
+    parser.add_argument(
+        "--img",
+        type=str,
+        default=r"D:\Min\Projects\VSCodeProjects\ultralytics-main\data\demo.jpg",
+        help="单张图像路径（可选）",
+    )
+    parser.add_argument("--folder", type=str, default=None, help="单个文件夹路径（可选）")
+    parser.add_argument("--recursive", action="store_false", help="是否递归读取文件夹")
+    parser.add_argument(
+        "--save",
+        type=str,
+        default=r"D:\Min\Projects\VSCodeProjects\ultralytics-main\results\test_imgs",
+        help="结果保存根目录",
+    )
+    parser.add_argument("--draw-chinese", action="store_false", help="是否绘制中文标签")
     return parser.parse_args()
+
 
 def main():
     args = parse_args()
@@ -229,5 +248,6 @@ def main():
     if args.folder:
         predictor.predict_single_folder(args.folder, save_root, recursive=args.recursive)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
