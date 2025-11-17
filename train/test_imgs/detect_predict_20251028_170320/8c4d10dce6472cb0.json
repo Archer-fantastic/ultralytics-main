@@ -1,0 +1,40 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "Cucumber",
+      "points": [
+        [
+          120.99979400634766,
+          357.9620361328125
+        ],
+        [
+          357.9620361328125,
+          357.9620361328125
+        ],
+        [
+          357.9620361328125,
+          120.99979400634766
+        ],
+        [
+          120.99979400634766,
+          120.99979400634766
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "8c4d10dce6472cb0.jpg",
+  "imageData": null,
+  "imageHeight": 1024,
+  "imageWidth": 683,
+  "image_path_list": [
+    "8c4d10dce6472cb0.jpg"
+  ],
+  "channels": 3
+}

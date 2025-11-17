@@ -1,0 +1,40 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "Fast food",
+      "points": [
+        [
+          396.1406555175781,
+          677.6318359375
+        ],
+        [
+          677.6318359375,
+          677.6318359375
+        ],
+        [
+          677.6318359375,
+          396.1406555175781
+        ],
+        [
+          396.1406555175781,
+          396.1406555175781
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "84cb94933b36e2b2.jpg",
+  "imageData": null,
+  "imageHeight": 768,
+  "imageWidth": 1024,
+  "image_path_list": [
+    "84cb94933b36e2b2.jpg"
+  ],
+  "channels": 3
+}

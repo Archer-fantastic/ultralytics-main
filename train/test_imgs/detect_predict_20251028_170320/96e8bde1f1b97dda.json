@@ -1,0 +1,66 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "Tomato",
+      "points": [
+        [
+          252.7346954345703,
+          380.7746887207031
+        ],
+        [
+          380.7746887207031,
+          380.7746887207031
+        ],
+        [
+          380.7746887207031,
+          252.7346954345703
+        ],
+        [
+          252.7346954345703,
+          252.7346954345703
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    },
+    {
+      "label": "Bread",
+      "points": [
+        [
+          858.6947631835938,
+          1012.0301513671875
+        ],
+        [
+          1012.0301513671875,
+          1012.0301513671875
+        ],
+        [
+          1012.0301513671875,
+          858.6947631835938
+        ],
+        [
+          858.6947631835938,
+          858.6947631835938
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "96e8bde1f1b97dda.jpg",
+  "imageData": null,
+  "imageHeight": 768,
+  "imageWidth": 1024,
+  "image_path_list": [
+    "96e8bde1f1b97dda.jpg"
+  ],
+  "channels": 3
+}

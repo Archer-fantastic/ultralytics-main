@@ -1,0 +1,40 @@
+{
+  "version": "5.4.1",
+  "flags": {},
+  "shapes": [
+    {
+      "label": "Tin can",
+      "points": [
+        [
+          172.11329650878906,
+          672.0485229492188
+        ],
+        [
+          672.0485229492188,
+          672.0485229492188
+        ],
+        [
+          672.0485229492188,
+          172.11329650878906
+        ],
+        [
+          172.11329650878906,
+          172.11329650878906
+        ]
+      ],
+      "group_id": null,
+      "description": "",
+      "shape_type": "polygon",
+      "flags": {},
+      "mask": null
+    }
+  ],
+  "imagePath": "62d08eab2428f3dc.jpg",
+  "imageData": null,
+  "imageHeight": 683,
+  "imageWidth": 1024,
+  "image_path_list": [
+    "62d08eab2428f3dc.jpg"
+  ],
+  "channels": 3
+}
