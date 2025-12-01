@@ -6,8 +6,6 @@
   "imageData": null,
   "imageHeight": 640,
   "imageWidth": 640,
-  "image_path_list": [
-    "104.bmp"
-  ],
+  "image_path_list": ["104.bmp"],
   "channels": 3
 }
